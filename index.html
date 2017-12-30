@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>SAM pattern with intercellular/cell.js</title>
+  <script src="https://www.celljs.org/cell.js"></script>
+  <script src="js/index.js"></script>
+</head>
+
+<body>
+<script>
+const COUNTER_MAX = 10;
+  
+var representation = {
+  $cell: true,
+  $type: "div",
+  id: "representation",
+  $components: [],
+  // model (Acceptor) -----------------------------------------------
+  _model: {
+      counter: COUNTER_MAX,
+      started: false,
+      launched: false,
+      aborted: false
+  },
+  _modelPresent: function(data) {
+      if (states.counting(this._model)) {
+        if (this._model.counter === 0) {
+          this._model.launched = data.launched || false ;
+        } else {
+          this._model.aborted = data.aborted || false ;
+          if (data.counter !== undefined) { this._model.counter = data.counter ; }
+        }
+      } else {
+        if (states.ready(this._model)) {
+          this._model.started = data.started || false ;
+        }
+      }
+      states.nextAction(this._model, this._modelPresent);
+  },  
+  // Representation update ----------------------------------      
+  $init: function(e) {
+    this.$components = states.view(this._model)
+  },  
+  $update: function() {
+    this.$components = states.view(this._model)
+  }
+}
+</script>
+  
+</html>
